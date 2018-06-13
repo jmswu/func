@@ -6,15 +6,15 @@ uint8_t HexCharArray2ByteArray(char *hex, uint8_t *data){
     uint8_t oneStrHex[3];
 
     strLen = strlen((const char*)hex);
-    dataLen = strLen / 2;
+    dataLen = strLen / 2U;
 
     /* length of string hex must be even number */
-    if ((strLen % 2) != 0){
+    if ((strLen % 2U) != 0){
         return 0;
     }
 
     for(uint8_t i = 0; i < dataLen; i++){
-        uint8_t index = i * 2;
+        uint8_t index = i * 2U;
         oneStrHex[0] = hex[index];
         oneStrHex[1] = hex[index + 1];
         oneStrHex[2] = '\0';
