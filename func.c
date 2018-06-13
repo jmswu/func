@@ -23,3 +23,27 @@ uint8_t HexCharArray2ByteArray(char *hex, uint8_t *data){
 
     return dataLen;
 }
+
+uint8_t trimSpace(char *input, char *output){
+    uint8_t len = 0;
+    
+    // loop until the end of the char array
+    // in case of loop forever, watch dog timer should reset the board.
+    while(*input != 0){
+        // if it's not space, assign the char to the output array
+        if (*input != 0x20){
+            *output = *input;
+            // point to the next output char
+            output++;
+            // count the length of output char
+            len++;
+        }
+        // point to next input char
+        input++;
+    }
+    
+    // add termination char
+    *output = 0;
+    // return lenght of the output char array.
+    return len;
+}
