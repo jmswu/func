@@ -68,3 +68,34 @@ uint8_t isCmd(uint8_t *cmd, const unsigned char *param, uint8_t offset){
         return 0;
     }
 }
+
+uint8_t* parse(uint8_t* buffer, uint8_t* pattern)
+{
+    uint8_t p;  // store one char in pattern
+    uint8_t b;  // store one char in buffer
+    
+    // make sure its a valid pointer
+    if(buffer == 0)
+        return 0;
+    
+    // skip all space
+    while(isspace(*buffer))
+        ++buffer;
+    
+    while(1)
+    {
+        // get one char from the pattern, then set the pointer to next 
+        // char in pattern. 
+        p = *pattern++;
+        // check if it's end of the pattern, return new buffer pointer 
+        // if its the end of pattern
+        if(p == 0)
+            return buffer;
+        // convert to lower case for comparison, exit loop if the end of
+        // the buffer is reached, or the there is a mis-match in the data
+        b = tolower(*buffer++);
+        if(b == 0 || b != p)
+            break;
+    }
+    return 0;
+}
