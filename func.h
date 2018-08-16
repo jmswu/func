@@ -34,8 +34,9 @@ uint8_t trimSpace(char *input, char *output);
 uint8_t isCmd(uint8_t *cmd, const unsigned char *cmd_to_check, uint8_t offset);
    
 // parse a pattern in the buffer
-// if a pattern is match, return the pointer after the pattern
-// if a pattern is not match, return 0
+// @param - uint8_t* buffer, char array needs to be parsed
+// @param - uint8_t* pattern, char array needs of the pattern
+// @return - 0 if no match, new pointer after the pattern if there is a match
 //
 //  Example #1
 //     char* cmd = "set param1 1024";
