@@ -29,6 +29,9 @@ uint8_t HexCharArray2ByteArray(char *hex, uint8_t *data);
    return - length of trimed char array
 */
 uint8_t trimSpace(char *input, char *output);
+   
+// look for a sub string in a string, starting from offset location
+uint8_t isCmd(uint8_t *cmd, const unsigned char *cmd_to_check, uint8_t offset);
 
 
 #ifdef	__cplusplus
