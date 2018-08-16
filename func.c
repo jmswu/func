@@ -89,8 +89,14 @@ uint8_t* parse(uint8_t* buffer, uint8_t* pattern)
         p = *pattern++;
         // check if it's end of the pattern, return new buffer pointer 
         // if its the end of pattern
-        if(p == 0)
-            return buffer;
+        if(p == 0){
+            // check the next char in the buffer is space, or its end of string
+            // or, may result in a fake mis-match.
+            // eg buffer = "hello", pattern = "he", this will come back as positive
+            // also can use isspace() to check for space instead of checking for 0x20
+            if ((*buffer == 0x20) || (*buffer == 0))
+                return buffer;
+        }
         // convert to lower case for comparison, exit loop if the end of
         // the buffer is reached, or the there is a mis-match in the data
         b = tolower(*buffer++);
