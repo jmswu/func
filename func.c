@@ -47,3 +47,24 @@ uint8_t trimSpace(char *input, char *output){
     // return lenght of the output char array.
     return len;
 }
+
+uint8_t isCmd(uint8_t *cmd, const unsigned char *param, uint8_t offset){
+    
+    // get the size of the command
+    uint8_t size;
+    size = strlen(param);
+    
+    // check if they match
+    uint8_t i = 0;
+    for(i = 0; i < size; i++){
+        if (cmd[i + offset] != param[i])
+            return 0;
+    }
+    
+    // if the next char is not space or \0, this is likely a longer command
+    if ((cmd[i + offset] == 0x20) || (cmd[i + offset] == 0x00)){
+        return 1;
+    }else{
+        return 0;
+    }
+}
