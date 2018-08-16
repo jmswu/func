@@ -17,13 +17,13 @@ uint8_t CBuff_isEmpty(volatile circular_buffer_t *buff){
     
     uint8_t result;
     // disable interrupt
-    INTCONbits.PEIE = 0;
+    //INTCONbits.PEIE = 0;
     
     if ((*buff).data_counter == 0) result = 1;
     else result = 0;
     
     // enable interrupt
-    INTCONbits.PEIE = 1;
+    //INTCONbits.PEIE = 1;
     return result;
 }
 
@@ -34,13 +34,13 @@ uint8_t CBuff_isFull(volatile circular_buffer_t *buff){
     uint8_t result;
     
     // disable interrupt
-    INTCONbits.PEIE = 0;
+    //INTCONbits.PEIE = 0;
     
     if ((*buff).data_counter == (*buff).size) result = 1;
     else result = 0;
     
     // enable interrupt
-    INTCONbits.PEIE = 1;
+    //INTCONbits.PEIE = 1;
     
     return result;
 }
@@ -58,11 +58,11 @@ void CBuff_put(volatile circular_buffer_t *buff, uint8_t data){
         (*buff).head = 0;
     
     // disable interrupt
-    INTCONbits.PEIE = 0;
+    //INTCONbits.PEIE = 0;
     // increase data counter
     (*buff).data_counter++;
     // enable interrupt
-    INTCONbits.PEIE = 1;
+    //INTCONbits.PEIE = 1;
 }
 
 
@@ -77,11 +77,11 @@ uint8_t CBuff_get(volatile circular_buffer_t *buff){
         (*buff).tail = 0;
     
     // disable interrupt
-    INTCONbits.PEIE = 0;
+    //INTCONbits.PEIE = 0;
     // increase data counter
     (*buff).data_counter--;
     // enable interrupt
-    INTCONbits.PEIE = 1;
+    //INTCONbits.PEIE = 1;
     
     return data;
 }
