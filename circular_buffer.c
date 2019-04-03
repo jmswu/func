@@ -1,87 +1,116 @@
-
 #include "circular_buffer.h"
 
-void CBuff_Initial(volatile circular_buffer_t *buff, uint8_t *data, uint8_t size){
-
-    if (!buff) return;
+void cbuff_init(volatile circular_buffer_t *buff, volatile uint8_t *data, uint16_t size){
+    // check if buffer is null
+    if (buff == 0) return;
+    
     (*buff).data = data;
-    (*buff).head = 0;
-    (*buff).tail = 0;
+    (*buff).head = 0U;
+    (*buff).tail = 0U;
     (*buff).size = size;
-    (*buff).data_counter = 0;
+    (*buff).data_count = 0U;
+    
+    return;
 }
 
-uint8_t CBuff_isEmpty(volatile circular_buffer_t *buff){
-    
-    if (!buff) return 1;
-    
-    uint8_t result;
-    // disable interrupt
-    //INTCONbits.PEIE = 0;
-    
-    if ((*buff).data_counter == 0) result = 1;
-    else result = 0;
-    
-    // enable interrupt
-    //INTCONbits.PEIE = 1;
-    return result;
-}
 
-uint8_t CBuff_isFull(volatile circular_buffer_t *buff){
+uint16_t cbuff_isEmpty(volatile circular_buffer_t *buff){
+    // check if buffer is null
+    if (buff == 0) return 1;
     
-    if (!buff) return 1;
-    
-    uint8_t result;
+    uint16_t result;
     
     // disable interrupt
-    //INTCONbits.PEIE = 0;
+    uint8_t saved_ipl;                                                              
+    SET_AND_SAVE_CPU_IPL(saved_ipl,7);    
     
-    if ((*buff).data_counter == (*buff).size) result = 1;
-    else result = 0;
+    if ((*buff).data_count == 0U) {
+        result = 1;
+    }
+    else {
+        result = 0;
+    }
     
     // enable interrupt
-    //INTCONbits.PEIE = 1;
+    RESTORE_CPU_IPL(saved_ipl); 
     
     return result;
 }
 
-void CBuff_put(volatile circular_buffer_t *buff, uint8_t data){
+uint16_t cbuff_isFull(volatile circular_buffer_t *buff){
+    // check if buff is null
+    if (buff == 0) return 0;
     
-    if (!buff) return;
+    uint16_t result;
     
-    // put one data in the buffer
+    // disable interrupt
+    uint8_t saved_ipl;                                                              
+    SET_AND_SAVE_CPU_IPL(saved_ipl,7);    
+    
+    if ((*buff).data_count == (*buff).size) {
+        result = 1;
+    }
+    else {
+        result = 0;
+    }
+    
+    // enable interrupt
+    RESTORE_CPU_IPL(saved_ipl);
+    
+    return result;
+}
+
+void cbuff_put(volatile circular_buffer_t *buff, uint8_t data){
+    // make sure buffer is not null
+    if (buff == 0) return;
+    
+    // disable interrupt
+    uint8_t saved_ipl;                                                              
+    SET_AND_SAVE_CPU_IPL(saved_ipl,7);  
+    
+    // put one byte into the buffer
     (*buff).data[(*buff).head] = data;
+    
     // point to next location
     (*buff).head++;
-    // check of over flow
-    if ((*buff).head >= (*buff).size)
-        (*buff).head = 0;
     
-    // disable interrupt
-    //INTCONbits.PEIE = 0;
+    // check for over flow
+    if ((*buff).head >= (*buff).size) {
+        (*buff).head = 0;
+    }
+    
     // increase data counter
-    (*buff).data_counter++;
+    (*buff).data_count++;
+    
     // enable interrupt
-    //INTCONbits.PEIE = 1;
+    RESTORE_CPU_IPL(saved_ipl);
+    
+    return;
 }
 
-
-uint8_t CBuff_get(volatile circular_buffer_t *buff){
-    
-    if (!buff) return 0;
-    
-    uint8_t data;
-    data = (*buff).data[(*buff).tail];
-    (*buff).tail++;
-    if ((*buff).tail >= (*buff).size)
-        (*buff).tail = 0;
+uint8_t cbuff_get(volatile circular_buffer_t *buff){
+    // make sure buff is valid
+    if (buff == 0) return 0;
     
     // disable interrupt
-    //INTCONbits.PEIE = 0;
-    // increase data counter
-    (*buff).data_counter--;
+    uint8_t saved_ipl;                                                              
+    SET_AND_SAVE_CPU_IPL(saved_ipl,7);   
+    
+    // get one byte
+    uint8_t data;
+    data = (*buff).data[(*buff).tail];
+    
+    // point to next location
+    (*buff).tail++;
+    
+    // check over flow
+    if ((*buff).tail >= (*buff).size) (*buff).tail = 0;
+    
+    // decrease data counter
+    (*buff).data_count--;
+    
     // enable interrupt
-    //INTCONbits.PEIE = 1;
+    RESTORE_CPU_IPL(saved_ipl);
     
     return data;
 }
