@@ -3,6 +3,7 @@
 void cbuff_init(volatile circular_buffer_t *buff, volatile uint8_t *data, uint16_t size){
     // check if buffer is null
     if (buff == 0) return;
+    //if (data == 0) return;
     
     (*buff).data = data;
     (*buff).head = 0U;
