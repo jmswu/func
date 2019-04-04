@@ -1,101 +1,102 @@
-#include "circular_buffer.h"
 
-void cbuff_init(volatile circular_buffer_t *buff, volatile uint8_t *data, uint16_t size){
+#include "circular_buffer_obj.h"
+#include <string.h>
+
+void cbuff_obj_init(volatile circular_buffer_obj_t *buff, volatile void *obj, uint16_t obj_max, uint16_t obj_size) {
     // check if buffer is null
     if (buff == 0) return;
-    if (data == 0) return;
-    
+    if (obj == 0) return;
+
     // disable interrupt
     // replace this according to your target
     // ---------------------------------------
     #warning "Replace the according to your target"
     uint8_t saved_ipl;
     SET_AND_SAVE_CPU_IPL(saved_ipl, 7);
-    // ---------------------------------------
+    // ---------------------------------------  
     
-    buff->data = data;
+    buff->obj = obj;
     buff->head = 0U;
     buff->tail = 0U;
-    buff->size = size;
-    buff->data_count = 0U;
+    buff->obj_max = obj_max;
+    buff->obj_count = 0U;
+    buff->obj_size = obj_size;
     
     // enable interrupt
     // replace this according to your target
     // ---------------------------------------
     #warning "Replace the according to your target"
     RESTORE_CPU_IPL(saved_ipl);
-    // ---------------------------------------
-    
+    // --------------------------------------- 
+
     return;
 }
 
-
-uint16_t cbuff_isEmpty(volatile circular_buffer_t *buff){
+uint16_t cbuff_obj_isEmpty(volatile circular_buffer_obj_t *buff) {
     // check if buffer is null
     if (buff == 0) return 1;
-    
+
     uint16_t result;
-    
+
     // disable interrupt
     // replace this according to your target
     // ---------------------------------------
     #warning "Replace the according to your target"
     uint8_t saved_ipl;
     SET_AND_SAVE_CPU_IPL(saved_ipl, 7);
-    // --------------------------------------- 
-    
-    if (buff->data_count == 0U) {
+    // ---------------------------------------  
+
+    if (buff->obj_count == 0U) {
         result = 1;
-    }
-    else {
+    } else {
         result = 0;
     }
-    
+
     // enable interrupt
     // replace this according to your target
     // ---------------------------------------
     #warning "Replace the according to your target"
     RESTORE_CPU_IPL(saved_ipl);
-    // ---------------------------------------
-    
+    // --------------------------------------- 
+
     return result;
 }
 
-uint16_t cbuff_isFull(volatile circular_buffer_t *buff){
+uint16_t cbuff_obj_isFull(volatile circular_buffer_obj_t *buff) {
     // check if buff is null
     if (buff == 0) return 0;
-    
+
     uint16_t result;
-    
+
     // disable interrupt
     // replace this according to your target
     // ---------------------------------------
     #warning "Replace the according to your target"
     uint8_t saved_ipl;
     SET_AND_SAVE_CPU_IPL(saved_ipl, 7);
-    // --------------------------------------- 
-    
-    if (buff->data_count == buff->size) {
+    // ---------------------------------------
+
+    if (buff->obj_count == buff->obj_max) {
         result = 1;
-    }
-    else {
+    } else {
         result = 0;
     }
-    
+
     // enable interrupt
     // replace this according to your target
     // ---------------------------------------
     #warning "Replace the according to your target"
     RESTORE_CPU_IPL(saved_ipl);
     // ---------------------------------------
-    
+
     return result;
 }
 
-void cbuff_put(volatile circular_buffer_t *buff, uint8_t data){
+void cbuff_obj_put(volatile circular_buffer_obj_t *buff, volatile void *obj) {
     // make sure buffer is not null
     if (buff == 0) return;
-    
+    if (obj == 0) return;
+
     // disable interrupt
     // replace this according to your target
     // ---------------------------------------
@@ -103,34 +104,41 @@ void cbuff_put(volatile circular_buffer_t *buff, uint8_t data){
     uint8_t saved_ipl;
     SET_AND_SAVE_CPU_IPL(saved_ipl, 7);
     // ---------------------------------------
-    
+
     // put one byte into the buffer
-    buff->data[buff->head] = data;
-    
+    uint16_t offset = 0;
+    uint8_t *pBuff = 0;
+    uint8_t *pObj = 0;
+    offset = buff->head * buff->obj_size;
+    pBuff = (uint8_t *) buff->obj;
+    pObj = (uint8_t *) obj;
+    memcpy(pBuff + offset, pObj, buff->obj_size);
+
     // point to next location
     buff->head++;
-    
+
     // check for over flow
-    if ((buff->head) >= (buff->size)) {
+    if ((buff->head) >= (buff->obj_max)) {
         buff->head = 0;
     }
     
-    // increase data counter
-    buff->data_count++;
-    
+    // increase object counter
+    buff->obj_count++;
+
     // enable interrupt
     // replace this according to your target
     // ---------------------------------------
     #warning "Replace the according to your target"
     RESTORE_CPU_IPL(saved_ipl);
     // ---------------------------------------
-    
+
     return;
 }
 
-uint8_t cbuff_get(volatile circular_buffer_t *buff){
+void cbuff_obj_get(volatile circular_buffer_obj_t *buff, volatile void *obj){
     // make sure buff is valid
-    if (buff == 0) return 0;
+    if (buff == 0) return;
+    if (obj == 0) return;
     
     // disable interrupt
     // replace this according to your target
@@ -138,20 +146,25 @@ uint8_t cbuff_get(volatile circular_buffer_t *buff){
     #warning "Replace the according to your target"
     uint8_t saved_ipl;
     SET_AND_SAVE_CPU_IPL(saved_ipl, 7);
-    // ---------------------------------------
+    // --------------------------------------- 
     
     // get one byte
-    uint8_t data;
-    data = buff->data[buff->tail];
+    uint16_t offset = 0;
+    uint8_t *pObj = 0;
+    uint8_t *pBuff = 0;
+    pObj = (uint8_t *)obj;
+    pBuff = (uint8_t *)buff->obj;
+    offset = buff->obj_size * buff->tail;
+    memcpy(pObj, pBuff + offset, buff->obj_size);
     
     // point to next location
     buff->tail++;
     
     // check over flow
-    if (buff->tail >= buff->size) buff->tail = 0;
+    if ((buff->tail) >= (buff->obj_max)) buff->tail = 0;
     
     // decrease data counter
-    buff->data_count--;
+    buff->obj_count--;
     
     // enable interrupt
     // replace this according to your target
@@ -160,5 +173,5 @@ uint8_t cbuff_get(volatile circular_buffer_t *buff){
     RESTORE_CPU_IPL(saved_ipl);
     // ---------------------------------------
     
-    return data;
+    return;
 }
