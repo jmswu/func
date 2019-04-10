@@ -30,11 +30,11 @@ void cbuff_init(volatile circular_buffer_t *buff, volatile uint8_t *data, uint16
 }
 
 
-uint16_t cbuff_isEmpty(volatile circular_buffer_t *buff){
+int cbuff_isEmpty(volatile circular_buffer_t *buff){
     // check if buffer is null
     if (buff == 0) return 1;
     
-    uint16_t result;
+    int result;
     
     // disable interrupt
     // replace this according to your target
@@ -61,11 +61,11 @@ uint16_t cbuff_isEmpty(volatile circular_buffer_t *buff){
     return result;
 }
 
-uint16_t cbuff_isFull(volatile circular_buffer_t *buff){
+int cbuff_isFull(volatile circular_buffer_t *buff){
     // check if buff is null
     if (buff == 0) return 0;
     
-    uint16_t result;
+    int result;
     
     // disable interrupt
     // replace this according to your target
