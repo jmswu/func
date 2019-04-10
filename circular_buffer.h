@@ -36,11 +36,11 @@ extern "C" {
     
     // check if a circular buffer is empty
     // @param *buff - pointer to a circular buffer
-    uint16_t cbuff_isEmpty(volatile circular_buffer_t *buff);
+    int cbuff_isEmpty(volatile circular_buffer_t *buff);
     
     // check if a circular buffer is full
     // @param *buff - pointer to a circular buffer
-    uint16_t cbuff_isFull(volatile circular_buffer_t *buff);
+    int cbuff_isFull(volatile circular_buffer_t *buff);
     
     // add one byte into a circular buffer
     // @param *buff     - pointer to a circular buffer
