@@ -32,11 +32,11 @@ void cbuff_obj_init(volatile circular_buffer_obj_t *buff, volatile void *obj, ui
     return;
 }
 
-uint16_t cbuff_obj_isEmpty(volatile circular_buffer_obj_t *buff) {
+int cbuff_obj_isEmpty(volatile circular_buffer_obj_t *buff) {
     // check if buffer is null
     if (buff == 0) return 1;
 
-    uint16_t result;
+    int result;
 
     // disable interrupt
     // replace this according to your target
@@ -62,11 +62,11 @@ uint16_t cbuff_obj_isEmpty(volatile circular_buffer_obj_t *buff) {
     return result;
 }
 
-uint16_t cbuff_obj_isFull(volatile circular_buffer_obj_t *buff) {
+int cbuff_obj_isFull(volatile circular_buffer_obj_t *buff) {
     // check if buff is null
     if (buff == 0) return 0;
 
-    uint16_t result;
+    int result;
 
     // disable interrupt
     // replace this according to your target
