@@ -21,7 +21,6 @@ void Multipress_press(multipress_params_t *params){
         params->tick_firstPress = Systick_get();
     }
     params->number_pressDone++;
-    printf("press: %u\n", params->number_pressDone);
 }
 
 uint8_t Multipress_detect(multipress_params_t *params){
