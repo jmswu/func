@@ -48,6 +48,9 @@ int parser_add(cmd_paser_params_t *params)
     unsigned int list_size = PARSER_CMD_SLOT; // slot size
     unsigned int params_size = sizeof(cmd_paser_params_t)/sizeof(params->data[0]); // params size
 
+    if (params == NULL)
+        return 0;
+
     /*
      * find an empty slot
      */
@@ -72,24 +75,27 @@ int parser_add(cmd_paser_params_t *params)
 
 int parser_execute(char *buffer)
 {
-    printf("in execute %p\n", buffer);
+    if (buffer == NULL)
+        return 0;
+
     for(unsigned int i = 0; i < PARSER_CMD_SLOT; i++)
     {
         if (params_list[i].isUsed == 1)
         {
             printf("isUsed found\n");
-            char *p;
-            p = parser_parse(buffer, params_list[i].cmd);
-            if (p)
+            char *p1, *p2, *p3;
+            p1 = parser_parse(buffer, params_list[i].cmd);
+            if (p1)
             {
-                printf("match-1: %s %p\n", params_list[i].cmd, p);
-                p = parser_parse(p, params_list[i].param1);
-                printf("looking for: %s %p\n", params_list[i].param1, p);
-                if (p)
+                printf("match-1: %s %p\n", params_list[i].cmd, p1);
+                p2 = parser_parse(p1, params_list[i].param1);
+                printf("looking for: %s %p\n", params_list[i].param1, p2);
+                if (p2)
                 {
                     printf("match-2: %s\n", params_list[i].param1);
-                    p = parser_parse(p, params_list[i].param2);
-                    if (p)
+                    p3 = parser_parse(p2, params_list[i].param2);
+                    printf("looking for: %s %p\n", params_list[i].param2, p3);
+                    if (p3)
                     {
                         printf("match-3: %s\n", params_list[i].param2);
                         params_list[i].cb(100, 200);
@@ -127,7 +133,7 @@ char* parser_parse(char* buffer, char* pattern)
             // or, may result in a fake mis-match.
             // eg buffer = "hello", pattern = "he", this will come back as positive
             // also can use isspace() to check for space instead of checking for 0x20
-            if ((*buffer == 0x20) || (*buffer == 0))
+            if ((*buffer == 0x20) || (*buffer == 0) || (*buffer == 0x0A))
                 return buffer;
         }
         // convert to lower case for comparison, exit loop if the end of
