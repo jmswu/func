@@ -75,30 +75,45 @@ int parser_add(cmd_paser_params_t *params)
 
 int parser_execute(char *buffer)
 {
+    // make sure buffer is valid
     if (buffer == NULL)
         return 0;
 
+    // loop through all the slot
     for(unsigned int i = 0; i < PARSER_CMD_SLOT; i++)
     {
+        // find a slot with data
         if (params_list[i].isUsed == 1)
         {
             printf("isUsed found\n");
             char *p1, *p2, *p3;
+
+            // return if cmd is NULL
+            if (params_list[i].cmd == NULL)
+                return 0;
             p1 = parser_parse(buffer, params_list[i].cmd);
             if (p1)
             {
                 printf("match-1: %s %p\n", params_list[i].cmd, p1);
+                if (params_list[i].param1 == NULL){
+                    params_list[i].cb(100, 110);
+                    return 1;
+                }
                 p2 = parser_parse(p1, params_list[i].param1);
                 printf("looking for: %s %p\n", params_list[i].param1, p2);
                 if (p2)
                 {
                     printf("match-2: %s\n", params_list[i].param1);
+                    if (params_list[i].param2 == NULL){
+                        params_list[i].cb(200, 210);
+                        return 1;
+                    }
                     p3 = parser_parse(p2, params_list[i].param2);
                     printf("looking for: %s %p\n", params_list[i].param2, p3);
                     if (p3)
                     {
                         printf("match-3: %s\n", params_list[i].param2);
-                        params_list[i].cb(100, 200);
+                        params_list[i].cb(300, 310);
                         return 1;
                     }
                 }
