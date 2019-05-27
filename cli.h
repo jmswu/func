@@ -5,14 +5,95 @@
  */
 #define CLI_MAX_ENTRY     (10)
 
-typedef enum {
+
+/*
+  example:
+
+    #include "cli.h"
+
+    // call back functions
+    cli_errno_t cli_cb1(cli_result_t * result);
+    cli_errno_t cli_cb2(cli_result_t * result);
+
+    main(){
+
+          // this need to be called before any cli functions call
+          cli_init();
+
+          // declare a parameter
+          cli_params_t params;
+
+          // setup an example command 1
+          cli_params_init(&params);
+          params.cmd = "test1";
+          params.param1 = "param_1";
+          params.param2 = "param_2";
+          params.cb = cli_cb1; // assign function call back
+          //cli_print_param(&params); // optional, print the parameter values
+          cli_add(&params); // add the command
+
+          // setup an example command 2
+          cli_params_init(&params);
+          params.cmd = "test2";
+          params.param1 = "param_1";
+          params.param2 = "param_2";
+          params.cb = cli_cb2; // assign function call back
+          //cli_print_param(&params); // optional, print the parameter values
+          cli_add(&params); // add the command
+
+          while(1)
+          {
+                printf("cmd>");
+                buffer[0] = 0;
+                fgets(buffer, buffer_size, stdin);
+
+                printf("\n");
+                printf("user input: %s", buffer);
+
+                if (cli_run(buffer) != CLI_OK)
+                {
+                    printf("[bad command]\n");
+                }
+           }
+
+    }
+
+    cli_errno_t cli_cb1(cli_result_t *result)
+    {
+        if ((result->isCmdMatch) && (result->isParam1Match) && (result->isParam2Match))
+        {
+            // to-do: user code
+            return CLI_OK;
+        }
+        else
+            return CLI_FAILED;
+    }
+
+    cli_errno_t cli_cb2(cli_result_t *result)
+    {
+        if ((result->isCmdMatch) && (result->isParam1Match) && (result->isParam2Match))
+        {
+            // to-do: user code
+            return CLI_OK;
+        }
+        else
+            return CLI_FAILED;
+    }
+
+
+ */
+
+typedef enum
+{
     CLI_OK,
     CLI_FAILED,
     CLI_NULL_PTR
-}cli_errno_t;
+} cli_errno_t;
 
-typedef union{
-    struct{
+typedef union
+{
+    struct
+    {
         uint8_t isCmdMatch      : 1; // indicate cmd is found
         uint8_t isParam1Match   : 1; // indicate param1 is found
         uint8_t isParam2Match   : 1; // indicate param2 is found
@@ -25,12 +106,12 @@ typedef union{
         char *p3;
     };
     uint8_t data[0];
-}cli_result_t;
+} cli_result_t;
 
 /*
  * cli call back function, this is the function to call when a cli is matched
  */
-typedef int(*cli_cb_t)(cli_result_t *);
+typedef cli_errno_t (*cli_cb_t)(cli_result_t *);
 
 typedef union
 {
@@ -92,9 +173,9 @@ cli_errno_t cli_run(char *buffer);
  * -----------------------------------------
  */
 
- /*
- * print parameter values for debug
- */
+/*
+* print parameter values for debug
+*/
 void cli_print_param(cli_params_t *params);
 
 /*
