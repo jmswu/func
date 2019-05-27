@@ -113,9 +113,6 @@ cli_errno_t cli_run(char *buffer)
     // conversion results
     cli_result_t result;
 
-
-    //cli_print_result(&result);
-
     // null pointer check
     if (buffer == NULL)
         return CLI_NULL_PTR;
