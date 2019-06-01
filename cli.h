@@ -1,3 +1,6 @@
+#ifndef CLI_H_INCLUDED
+#define CLI_H_INCLUDED
+
 #include <stdint-gcc.h>
 
 /*
@@ -183,6 +186,7 @@ void cli_print_param(cli_params_t *params);
  */
 void cli_print_result(cli_result_t *result);
 
+#ifndef
 
 
 
