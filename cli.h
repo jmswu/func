@@ -186,7 +186,7 @@ void cli_print_param(cli_params_t *params);
  */
 void cli_print_result(cli_result_t *result);
 
-#ifndef
+#endif
 
 
 
