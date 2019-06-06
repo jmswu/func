@@ -1,8 +1,6 @@
 #ifndef SORT_H_INCLUDED
 #define SORT_H_INCLUDED
 
-#include <stdint-gcc.h>
-
 /*
  * function call back for user compare implementation for all data types
  */
